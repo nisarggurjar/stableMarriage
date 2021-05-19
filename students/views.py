@@ -8,11 +8,11 @@ from django.http import HttpResponse
 
 
 def Home(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
-    if not request.user.is_authenticated:
-        return redirect('login')
     return render(request, 'index.html')
 
 
@@ -59,6 +59,8 @@ def Signup(request):
 
 
 def Rooms(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
@@ -66,6 +68,8 @@ def Rooms(request):
 
 
 def Mess(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
@@ -73,6 +77,8 @@ def Mess(request):
 
 
 def contact(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
@@ -88,6 +94,8 @@ def contact(request):
 
 
 def Preferences(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     if request.method == 'POST':
         p = Choices.objects.filter(user=request.user).first()
         data = request.POST
@@ -116,6 +124,8 @@ def Preferences(request):
 
 
 def Results(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
