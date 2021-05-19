@@ -95,18 +95,22 @@ def Preferences(request):
 
 
 def Results(request):
-    
+
     prefGrid = dict()
     pref = Choices.objects.all()
-    toppers = [i.user.id for i in User.objects.filter(is_staff=True)]
+    toppers = [i.id for i in User.objects.filter(is_staff=True)]
     avgStudents = [
-        i.user.id for i in User.objects.filter(is_staff=False)]
-
+        i.id for i in User.objects.filter(is_staff=False)]
+    toppers = toppers[1:]
     topPref = dict()
     avgPref = dict()
     for i in pref:
-        prefGrid.update({i.user.id: [
-                        i.choice1.id, i.choice2.id, i.choice3.id, i.choice4.id, i.choice5.id]})
+        if i.user.id == 1:
+            pass
+        else:
+            prefGrid.update({i.user.id: [
+                i.choice1.id, i.choice2.id, i.choice3.id, i.choice4.id, i.choice5.id]})
+    print(toppers, '\n', avgStudents, '\n', prefGrid)
     for i in toppers:
         topPref.update({i: prefGrid[i]})
     for i in avgStudents:
@@ -178,4 +182,4 @@ def Results(request):
         p2 = User.objects.get(id=i[1])
         Roomies.append([p1.username, p2.username])
     print(Roomies)
-    return render(request, 'results.html')
+    return render(request, 'results.html', {'Roomies': Roomies})
