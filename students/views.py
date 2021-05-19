@@ -8,6 +8,9 @@ from django.http import HttpResponse
 
 
 def Home(request):
+    p = Choices.objects.filter(user=request.user)
+    if not p:
+        return redirect('preferance')
     if not request.user.is_authenticated:
         return redirect('login')
     return render(request, 'index.html')
@@ -20,7 +23,7 @@ def Login(request):
         user = authenticate(username=un, password=pwd)
         if user:
             login(request, user)
-            return redirect('home')
+            return redirect('preferance')
     return render(request, 'login.html')
 
 
@@ -56,14 +59,23 @@ def Signup(request):
 
 
 def Rooms(request):
+    p = Choices.objects.filter(user=request.user)
+    if not p:
+        return redirect('preferance')
     return render(request, 'rooms.html')
 
 
 def Mess(request):
+    p = Choices.objects.filter(user=request.user)
+    if not p:
+        return redirect('preferance')
     return render(request, 'mess.html')
 
 
 def contact(request):
+    p = Choices.objects.filter(user=request.user)
+    if not p:
+        return redirect('preferance')
     if request.method == "POST":
         name = request.POST['name']
         email = request.POST['email']
@@ -95,13 +107,19 @@ def Preferences(request):
 
 
 def Results(request):
-
+    p = Choices.objects.filter(user=request.user)
+    if not p:
+        return redirect('preferance')
     prefGrid = dict()
     pref = Choices.objects.all()
     toppers = [i.id for i in User.objects.filter(is_staff=True)]
     avgStudents = [
         i.id for i in User.objects.filter(is_staff=False)]
     toppers = toppers[1:]
+    if len(toppers) > len(avgStudents):
+        toppers = toppers[:len(avgStudents)]
+    else:
+        avgStudents = avgStudents[:len(toppers)]
     topPref = dict()
     avgPref = dict()
     for i in pref:
@@ -181,5 +199,6 @@ def Results(request):
         p1 = User.objects.get(id=i[0])
         p2 = User.objects.get(id=i[1])
         Roomies.append([p1.username, p2.username])
+        #Roomies.append([p1.first_name, p2.first_name])
     print(Roomies)
     return render(request, 'results.html', {'Roomies': Roomies})
