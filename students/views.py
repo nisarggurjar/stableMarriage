@@ -95,4 +95,87 @@ def Preferences(request):
 
 
 def Results(request):
+    
+    prefGrid = dict()
+    pref = Choices.objects.all()
+    toppers = [i.user.id for i in User.objects.filter(is_staff=True)]
+    avgStudents = [
+        i.user.id for i in User.objects.filter(is_staff=False)]
+
+    topPref = dict()
+    avgPref = dict()
+    for i in pref:
+        prefGrid.update({i.user.id: [
+                        i.choice1.id, i.choice2.id, i.choice3.id, i.choice4.id, i.choice5.id]})
+    for i in toppers:
+        topPref.update({i: prefGrid[i]})
+    for i in avgStudents:
+        avgPref.update({i: prefGrid[i]})
+
+    tentative_engagements = []
+
+    free_toppers = []
+
+    def init_free_topper():
+        '''Initialize the arrays of women and men to represent 
+            that they're all initially free and not engaged'''
+        for top in topPref:
+            free_toppers.append(top)
+
+    def begin_matching(top):  # (man)
+        '''Find the first free woman available to a man at
+                any given time'''
+
+        for avg in topPref[top]:
+
+            # Boolean for whether woman is taken or not
+            taken_match = [
+                mate for mate in tentative_engagements if avg in mate]
+
+            if (len(taken_match) == 0):
+                # tentatively engage the man and woman
+                tentative_engagements.append([top, avg])
+                free_toppers.remove(top)
+
+                break
+
+            elif (len(taken_match) > 0):
+
+                # Check ranking of the current dude and the ranking of the   'to-be' dude
+                current_mate = avgPref[avg].index(taken_match[0][0])
+                potential_mate = avgPref[avg].index(top)
+
+                if (current_mate < potential_mate):
+                    pass
+                else:
+                    # The new guy is engaged
+                    free_toppers.remove(top)
+
+                    # The old guy is now single
+                    free_toppers.append(taken_match[0][0])
+
+                    # Update the fiance of the woman (tentatively)
+                    taken_match[0][0] = top
+                    break
+
+    def stable_matching():
+        '''Matching algorithm until stable match terminates'''
+        while (len(free_toppers) > 0):
+            for top in free_toppers:
+                begin_matching(top)
+
+    def main():
+        init_free_topper()
+        print(free_toppers)
+        stable_matching()
+        return tentative_engagements
+
+    RoomMates = main()
+    print(RoomMates)
+    Roomies = list()
+    for i in RoomMates:
+        p1 = User.objects.get(id=i[0])
+        p2 = User.objects.get(id=i[1])
+        Roomies.append([p1.username, p2.username])
+    print(Roomies)
     return render(request, 'results.html')
