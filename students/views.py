@@ -89,14 +89,23 @@ def contact(request):
 
 def Preferences(request):
     if request.method == 'POST':
+        p = Choices.objects.filter(user=request.user).first()
         data = request.POST
         ch1 = User.objects.get(id=data['ch1'])
         ch2 = User.objects.get(id=data['ch2'])
         ch3 = User.objects.get(id=data['ch3'])
         ch4 = User.objects.get(id=data['ch4'])
         ch5 = User.objects.get(id=data['ch5'])
-        Choices.objects.create(user=request.user, choice1=ch1,
-                               choice2=ch2, choice3=ch3, choice4=ch4, choice5=ch5)
+        if not p:
+            Choices.objects.create(user=request.user, choice1=ch1,
+                                   choice2=ch2, choice3=ch3, choice4=ch4, choice5=ch5)
+        else:
+            p.choice1 = ch1
+            p.choice2 = ch2
+            p.choice3 = ch3
+            p.choice4 = ch4
+            p.choice5 = ch5
+            p.save()
         return redirect('results')
     if request.user.is_staff:
         students = User.objects.filter(is_staff=False)
