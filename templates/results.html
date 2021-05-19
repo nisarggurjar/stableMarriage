@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %} Results {% endblock title %}
+<br />
+{% block body %}
+<link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+/>
+
+<div class="container" style="margin-top: 50px">
+  <h2 class="text-center">Associated Mates</h2>
+  <br /><br />
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col" style="text-align: center">Topper</th>
+        <th scope="col" style="text-align: center">Average</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i,j in Roomies %}
+      <tr>
+        <td style="text-align: center">{{ i }}</td>
+        <td style="text-align: center">{{ j }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

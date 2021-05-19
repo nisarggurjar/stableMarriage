@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+  <head>
+    <title>Log in |</title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+    {% if err %}
+    <script>
+      alert('Username already exists');
+    </script>
+    {% endif %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/static/admin/css/nav_sidebar.css"
+    />
+    <script src="/static/admin/js/nav_sidebar.js" defer></script>
+
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
+
+    <meta
+      name="viewport"
+      content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/static/admin/css/responsive.css"
+    />
+
+    <meta name="robots" content="NONE,NOARCHIVE" />
+  </head>
+
+  <body class="login" data-admin-utc-offset="0">
+    <!-- Container -->
+    <div id="container">
+      <!-- Header -->
+      <div id="header">
+        <div id="branding">
+          <h1 id="site-name"><a href="/admin/">Login</a></h1>
+        </div>
+      </div>
+      <!-- END Header -->
+
+      <div class="main shifted" id="main">
+        <div class="content">
+          <!-- Content -->
+          <div id="content" class="colM">
+            <div id="content-main">
+              <form method="post" id="login-form">
+                {% csrf_token %}
+                <div class="form-row">
+                  <label class="required" for="id_username">Name:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    autofocus
+                    autocapitalize="none"
+                    autocomplete="username"
+                    maxlength="150"
+                    required
+                    id="username"
+                  />
+                </div>
+                <div class="form-row">
+                  <label class="required" for="id_username">Username:</label>
+                  <input
+                    type="text"
+                    name="username"
+                    autocapitalize="none"
+                    autocomplete="username"
+                    maxlength="150"
+                    required
+                    id="username"
+                  />
+                </div>
+                <div class="form-row">
+                  <label class="required" for="">email:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    autocapitalize="none"
+                    maxlength="150"
+                    required
+                    id=""
+                  />
+                </div>
+                <div class="form-row">
+                  <label class="required" for="">Select Student Type:</label>
+                  <select required name="type" id="">
+                    <option selected disabled>Select Your Student Type</option>
+                    <option value="1">Topper</option>
+                    <option value="0">Average</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label class="required" for="id_password">Password:</label>
+                  <input
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                    id="password"
+                  />
+                </div>
+                <div class="submit-row">
+                  <input type="submit" name="Signup" value="Sign Up" />
+                </div>
+              </form>
+              <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </div>
+            <br class="clear" />
+          </div>
+          <!-- END Content -->
+          <div id="footer"></div>
+        </div>
+      </div>
+    </div>
+    <!-- END Container -->
+  </body>
+</html>
