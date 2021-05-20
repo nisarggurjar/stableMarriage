@@ -5,6 +5,7 @@ from .models import *
 from .models import Preferences as Choices
 from datetime import datetime
 from django.http import HttpResponse
+from django.db.models.query import QuerySet
 
 
 def Home(request):
@@ -23,6 +24,9 @@ def Login(request):
         user = authenticate(username=un, password=pwd)
         if user:
             login(request, user)
+            p = Choices.objects.filter(user=request.user)
+            if not p:
+                return redirect('preferance')
             return redirect('preferance')
     return render(request, 'login.html')
 
@@ -33,6 +37,7 @@ def Logout(request):
 
 
 def Signup(request):
+    global err
     err = False
     if request.method == 'POST':
         n = request.POST['name']
@@ -117,13 +122,29 @@ def Preferences(request):
         return redirect('results')
     if request.user.is_staff:
         students = User.objects.filter(is_staff=False)
+        students = [i.id for i in students]
+        print(students)
     else:
         students = User.objects.filter(is_staff=True)
+        students = [i.id for i in students]
+        print(students)
+    for i in students:
+        t1 = [j.id for j in Choices.objects.all()]
+        print("t1=", t1)
+        if i not in t1:
+            print("nhi mila", t1, i, )
+            print("j=", i)
+            students.remove(i)
+            print(students)
+    students = User.objects.filter(id__in=students)
+    print(students)
     d = {'students': students}
     return render(request, 'preferences.html', d)
 
 
 def Results(request):
+    global err1
+    err1 = False
     if not request.user.is_authenticated:
         return redirect('login')
     p = Choices.objects.filter(user=request.user)
@@ -135,6 +156,7 @@ def Results(request):
     avgStudents = [
         i.id for i in User.objects.filter(is_staff=False)]
     toppers = toppers[1:]
+    print(len(avgStudents), len(toppers))
     if len(toppers) > len(avgStudents):
         toppers = toppers[:len(avgStudents)]
     else:
@@ -183,21 +205,26 @@ def Results(request):
             elif (len(taken_match) > 0):
 
                 # Check ranking of the current dude and the ranking of the   'to-be' dude
-                current_mate = avgPref[avg].index(taken_match[0][0])
-                potential_mate = avgPref[avg].index(top)
+                try:
+                    current_mate = avgPref[avg].index(taken_match[0][0])
+                    potential_mate = avgPref[avg].index(top)
 
-                if (current_mate < potential_mate):
+                    if (current_mate < potential_mate):
+                        pass
+                    else:
+                        # The new guy is engaged
+                        free_toppers.remove(top)
+
+                        # The old guy is now single
+                        free_toppers.append(taken_match[0][0])
+
+                        # Update the fiance of the woman (tentatively)
+                        taken_match[0][0] = top
+                        break
+                except:
+                    global err1
+                    err1 = True
                     pass
-                else:
-                    # The new guy is engaged
-                    free_toppers.remove(top)
-
-                    # The old guy is now single
-                    free_toppers.append(taken_match[0][0])
-
-                    # Update the fiance of the woman (tentatively)
-                    taken_match[0][0] = top
-                    break
 
     def stable_matching():
         '''Matching algorithm until stable match terminates'''
@@ -220,4 +247,4 @@ def Results(request):
         Roomies.append([p1.username, p2.username])
         #Roomies.append([p1.first_name, p2.first_name])
     print(Roomies)
-    return render(request, 'results.html', {'Roomies': Roomies})
+    return render(request, 'results.html', {'Roomies': Roomies, 'err': err1})

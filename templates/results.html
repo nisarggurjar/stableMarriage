@@ -5,7 +5,11 @@
   rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 />
-
+{% if err %}
+<script>
+  alert("you cant't be matched with anyone");
+</script>
+{% endif %}
 <div class="container" style="margin-top: 50px">
   <h2 class="text-center">Associated Mates</h2>
   <br /><br />
