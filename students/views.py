@@ -27,7 +27,7 @@ def Login(request):
             p = Choices.objects.filter(user=request.user)
             if not p:
                 return redirect('preferance')
-            return redirect('preferance')
+            return redirect('home')
     return render(request, 'login.html')
 
 
@@ -150,7 +150,7 @@ def Results(request):
     p = Choices.objects.filter(user=request.user)
     if not p:
         return redirect('preferance')
-    prefGrid = dict()
+    prefGrid = dict() 
     pref = Choices.objects.all()
     toppers = [i.id for i in User.objects.filter(is_staff=True)]
     avgStudents = [
